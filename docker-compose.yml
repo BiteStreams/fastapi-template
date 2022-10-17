@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  api:
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    build:
+      dockerfile: ./api/Dockerfile
+      context: .
+    volumes:
+      - ./api:/home/user/api
+      - /home/user/api/.venv
+
+  db:
+    image: postgres:14.5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=test
+
+volumes:
+  postgres-data:
