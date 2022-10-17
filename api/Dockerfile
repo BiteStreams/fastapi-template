@@ -20,16 +20,17 @@ COPY --chown=user:user ./pyproject.toml ./
 COPY --chown=user:user ./poetry.lock ./
 
 
-FROM base as test
-RUN --mount=type=cache,target=/root/.cache poetry install --with dev
-COPY --chown=user:user ./$PROJECT /app/$ROOT/$PROJECT
-
-
 FROM base as dev
 RUN --mount=type=cache,target=/root/.cache poetry install
 COPY --chown=user:user ./$PROJECT /home/user/$PROJECT
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+
+
+FROM dev as test
+
+RUN --mount=type=cache,target=/root/.cache poetry install --with dev
+
 
 # Default target.
 FROM dev

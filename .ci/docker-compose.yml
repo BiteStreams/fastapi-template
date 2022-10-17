@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+  unit:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+      target: test
+    volumes:
+      - ./api:/home/user/api
+      - /home/user/api/.venv
+
+  integration:
+    depends_on:
+      - ci_postgres
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+      target: test
+    volumes:
+      - ./api:/home/user/api
+      - /home/user/api/.venv
+
+  ci_postgres:
+    image: postgres:14.5
+    environment:
+      - POSTGRES_PASSWORD=test
