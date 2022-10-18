@@ -11,7 +11,6 @@ services:
       context: .
     volumes:
       - ./api:/home/user/api
-      - /home/user/api/.venv
 
   db:
     image: postgres:14.5

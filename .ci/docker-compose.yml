@@ -8,7 +8,6 @@ services:
       target: test
     volumes:
       - ./api:/home/user/api
-      - /home/user/api/.venv
 
   integration:
     depends_on:
@@ -19,7 +18,6 @@ services:
       target: test
     volumes:
       - ./api:/home/user/api
-      - /home/user/api/.venv
 
   ci_db:
     image: postgres:14.5
