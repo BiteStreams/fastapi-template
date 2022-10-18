@@ -12,7 +12,7 @@ services:
 
   integration:
     depends_on:
-      - ci_postgres
+      - ci_db
     build:
       context: .
       dockerfile: api/Dockerfile
@@ -21,7 +21,7 @@ services:
       - ./api:/home/user/api
       - /home/user/api/.venv
 
-  ci_postgres:
+  ci_db:
     image: postgres:14.5
     environment:
       - POSTGRES_PASSWORD=test
