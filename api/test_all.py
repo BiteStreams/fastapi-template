@@ -1,7 +1,11 @@
-import pytest
+import os
+import time
 
-from .repository import TodoRepository, Todo, get_engine, SQL_BASE
+import alembic.config
+import pytest
 from sqlalchemy.orm import sessionmaker
+
+from api.repository import SQL_BASE, Todo, TodoRepository, get_engine
 
 
 @pytest.mark.unit
@@ -11,12 +15,8 @@ def test_sanity():
 
 @pytest.mark.integration
 def test_repository():
-    engine = get_engine("postgresql://postgres:test@ci_db:5432/postgres")
-    session = sessionmaker(bind=engine)()
-
-    SQL_BASE.metadata.create_all(engine)
-
-    repository = TodoRepository(session)
+    os.environ["DB_STRING"] = "postgresql://postgres:test@ci_db:5432/postgres"
+    repository = get_repo()
 
     with repository as r:
         r.save(Todo("testkey", "testvalue"))
@@ -24,11 +24,28 @@ def test_repository():
     todo = r.get_by_key("testkey")
     assert todo.value == "testvalue"
 
-    session.close()
+    repository._session.close()
 
-    session = sessionmaker(bind=engine)()
+    cleanup_database()
+
+
+def cleanup_database():
+    session = sessionmaker(bind=get_engine())()
+
     for table in SQL_BASE.metadata.tables.keys():
         session.execute(f"TRUNCATE TABLE {table} CASCADE")
 
     session.commit()
     session.close()
+
+
+def get_repo():
+    time.sleep(1)
+    alembicArgs = [
+        "--raiseerr",
+        "upgrade",
+        "head",
+    ]
+    alembic.config.main(argv=alembicArgs)
+
+    return TodoRepository(sessionmaker(bind=get_engine())())

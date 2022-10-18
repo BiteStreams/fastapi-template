@@ -16,23 +16,21 @@ ENV \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=true
 
-COPY --chown=user:user ./pyproject.toml ./
-COPY --chown=user:user ./poetry.lock ./
-
+COPY --chown=user:user ./pyproject.toml ./poetry.lock ./pytest.ini ./alembic.ini ./
+RUN --mount=type=cache,target=/root/.cache poetry install
 
 FROM base as dev
 
-WORKDIR /home/user/$PROJECT
-RUN --mount=type=cache,target=/root/.cache poetry install
 COPY --chown=user:user ./$PROJECT /home/user/$PROJECT
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
 
 
-FROM dev as test
+FROM base as test
 
 RUN --mount=type=cache,target=/root/.cache poetry install --with dev
-
+COPY --chown=user:user ./$PROJECT /home/user/$PROJECT
+RUN mkdir /home/user/.mypy_cache && chown -R user:user /home/user/.mypy_cache
 
 # Default target.
 FROM dev
