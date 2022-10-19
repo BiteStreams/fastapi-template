@@ -16,7 +16,7 @@ ENV \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=true
 
-COPY --chown=user:user ./pyproject.toml ./poetry.lock ./pytest.ini ./alembic.ini ./
+COPY --chown=user:user ./pyproject.toml ./poetry.lock ./alembic.ini ./
 RUN --mount=type=cache,target=/root/.cache poetry install
 
 FROM base as dev

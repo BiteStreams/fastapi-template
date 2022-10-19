@@ -33,6 +33,12 @@ mypy = "^0.982"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+markers = [
+    "unit: mark a test as a unit test.",
+    "integration: mark test as an integration test.",
+]
+
 [tool.black]
 line_length = 120
 
