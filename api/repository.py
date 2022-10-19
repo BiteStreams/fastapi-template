@@ -1,7 +1,9 @@
 import os
 from dataclasses import dataclass
 from functools import lru_cache
+from typing import Optional
 
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
@@ -22,8 +24,7 @@ class TodoInDB(SQL_BASE):  # type: ignore
     value = Column(String(length=128), nullable=False)
 
 
-@dataclass
-class Todo:
+class Todo(BaseModel):
     key: str
     value: str
 
@@ -40,25 +41,22 @@ class TodoRepository:
             self._session.rollback()
             return
 
-        error = None
-
         try:
             self._session.commit()
         except DatabaseError as e:
-            error = e
             self._session.rollback()
-
-        if error:
-            raise ValueError("A storage error occurred") from error
+            raise e
 
     def save(self, todo: Todo):
         self._session.add(TodoInDB(key=todo.key, value=todo.value))
 
-    def get_by_key(self, key: str):
+    def get_by_key(self, key: str) -> Optional[Todo]:
         instance = self._session.query(TodoInDB).filter(TodoInDB.key == key).first()
 
         if instance:
-            return Todo(instance.key, instance.value)
+            return Todo(key=instance.key, value=instance.value)
+
+        return None
 
 
 def create_todo_repository():

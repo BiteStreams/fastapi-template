@@ -4,7 +4,9 @@ import time
 import alembic.config
 import pytest
 from sqlalchemy.orm import sessionmaker
+from starlette.testclient import TestClient
 
+from api.main import app
 from api.repository import SQL_BASE, Todo, TodoRepository, get_engine
 
 
@@ -15,11 +17,10 @@ def test_sanity():
 
 @pytest.mark.integration
 def test_repository():
-    os.environ["DB_STRING"] = "postgresql://postgres:test@ci_db:5432/postgres"
     repository = get_repo()
 
     with repository as r:
-        r.save(Todo("testkey", "testvalue"))
+        r.save(Todo(key="testkey", value="testvalue"))
 
     todo = r.get_by_key("testkey")
     assert todo.value == "testvalue"
@@ -27,6 +28,19 @@ def test_repository():
     repository._session.close()
 
     cleanup_database()
+
+
+@pytest.mark.integration
+def test_api():
+    time.sleep(1)
+    client = TestClient(app)
+    response = client.post("testkey?value=testvalue")
+
+    assert response.status_code == 200
+    response = client.get("testkey")
+
+    assert response.status_code == 200
+    assert response.json() == {"key": "testkey", "value": "testvalue"}
 
 
 def cleanup_database():
@@ -40,6 +54,7 @@ def cleanup_database():
 
 
 def get_repo():
+    os.environ["DB_STRING"] = "postgresql://postgres:test@ci_db:5432/postgres"
     time.sleep(1)
     alembicArgs = [
         "--raiseerr",
