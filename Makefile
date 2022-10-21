@@ -15,7 +15,7 @@ up: ## Run the application
 done: lint test ## Prepare for a commit
 test: utest itest  ## Run unit and integration tests
 
-ci-docker-compose := docker-compose -f base.yml  -f .ci/docker-compose.yml
+ci-docker-compose := docker-compose -f .ci/docker-compose.yml
 
 utest: clean_test  ## Run unit tests
 	$(ci-docker-compose) run --rm unit pytest -m unit .

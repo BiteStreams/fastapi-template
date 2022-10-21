@@ -3,21 +3,21 @@ version: "3.7"
 services:
   unit:
     build:
-      context: .
+      context: ..
       dockerfile: api/Dockerfile
       target: test
     volumes:
-      - ./api:/home/user/api
+      - ../api:/home/user/api
 
   integration:
     depends_on:
       - ci_db
     build:
-      context: .
+      context: ..
       dockerfile: api/Dockerfile
       target: test
     volumes:
-      - ./api:/home/user/api
+      - ../api:/home/user/api
 
   ci_db:
     image: postgres:14.5
