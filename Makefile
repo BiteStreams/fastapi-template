@@ -17,10 +17,10 @@ test: utest itest  ## Run unit and integration tests
 
 ci-docker-compose := docker-compose -f .ci/docker-compose.yml
 
-utest: clean_test  ## Run unit tests
+utest: cleantest ## Run unit tests
 	$(ci-docker-compose) run --rm unit pytest -m unit .
 
-itest: clean_test  ## Run integration tests
+itest: cleantest ## Run integration tests
 	$(ci-docker-compose) run --rm integration pytest -m integration .
 
 check: ## Check the code base
@@ -33,7 +33,7 @@ lint: ## Check the code base, and fix it
 	$(ci-docker-compose) run --rm unit isort ./$(PROJECT)
 	$(ci-docker-compose) run --rm -v mypycache:/home/user/.mypy_cache unit mypy ./$(PROJECT)
 
-clean_test:  ## Clean up test containers
+cleantest:  ## Clean up test containers
 	$(ci-docker-compose) build
 	$(ci-docker-compose) down --remove-orphans
 
