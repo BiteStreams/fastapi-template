@@ -57,11 +57,11 @@ help:
 ```
 
 To start up the project locally you first clone the project, and then run the following command in the cloned directory:
-```shell
+```sh
 $ make up
 ```
 Then to update the schema using alembic, in another shell:
-```shell
+```sh
 $ make migrate
 ```
 **Thats it**, now the app is running and works and is reachable on [localhost:5000/docs](localhost:5000/docs). 
@@ -73,7 +73,7 @@ Code changes are automatically detected using a docker-volume.
 The tests are containerized and the Docker setup can be found in the `.ci/` folder.
 They are written using Pytest.
 You can run the tests using:
-```shell
+```sh
 $ make test
 ```
 This runs the integration & unit tests. If you want to run them separately, use `make itest` to run the integration tests and `make utest` to run the unit tests.
