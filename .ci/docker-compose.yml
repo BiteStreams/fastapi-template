@@ -8,6 +8,8 @@ services:
       target: test
     volumes:
       - ../api:/home/user/api
+    environment:
+      - DB_STRING=postgresql://postgres:test@ci_db:5432/postgres
 
   integration:
     depends_on:
@@ -18,6 +20,8 @@ services:
       target: test
     volumes:
       - ../api:/home/user/api
+    environment:
+      - DB_STRING=postgresql://postgres:test@ci_db:5432/postgres
 
   ci_db:
     image: postgres:14.5

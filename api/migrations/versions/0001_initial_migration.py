@@ -20,8 +20,9 @@ def upgrade() -> None:
     op.create_table(
         "todo",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column("key", sa.String(length=128), nullable=False),
+        sa.Column("key", sa.String(length=128), nullable=False, unique=True),
         sa.Column("value", sa.String(length=128), nullable=False),
+        sa.Column("done", sa.Boolean(), default=False),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###

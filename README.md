@@ -66,7 +66,8 @@ you must have **Poetry** installed.
 Create a poetry environment by running `poetry install` at the root of the project.
 To start up the server in the poetry environment and talk to a test sqlite database in `./test.db`, run
 ```bash
-$ DB_STRING=sqlite:///test.db/ poetry run alembic upgrade head && poetry run uvicorn api.main:app --port 5000 --reload
+$ export DB_STRING=sqlite:///test.db/
+$ poetry run alembic upgrade head && poetry run uvicorn api.main:app --port 5000 --reload
 ```
 Again, the app should be all set up and running at [localhost:5000/docs](localhost:5000/docs).
 
