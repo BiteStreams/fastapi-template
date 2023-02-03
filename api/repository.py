@@ -1,5 +1,4 @@
 import os
-from dataclasses import dataclass
 from functools import lru_cache
 from typing import Optional
 
@@ -13,7 +12,7 @@ SQL_BASE = declarative_base()
 
 @lru_cache(maxsize=None)
 def get_engine():
-    return create_engine(os.getenv("DB_STRING", "postgresql://postgres:test@db:5432/postgres"), pool_pre_ping=True)
+    return create_engine(os.getenv("DB_STRING"), pool_pre_ping=True)
 
 
 class TodoInDB(SQL_BASE):  # type: ignore

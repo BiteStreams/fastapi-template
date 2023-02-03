@@ -11,6 +11,8 @@ services:
       context: .
     volumes:
       - ./api:/home/user/api
+    environment:
+      - DB_STRING=postgresql://postgres:test@db:5432/postgres
 
   db:
     image: postgres:14.5

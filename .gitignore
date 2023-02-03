@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 **.swp
 .idea
+
+# Testing out
+test*.db
