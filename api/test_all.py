@@ -3,7 +3,7 @@ import time
 
 import alembic.config
 import pytest
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
 
@@ -14,6 +14,24 @@ from api.repository import SQL_BASE, SQLTodoRepository, Todo, TodoFilter, get_en
 @pytest.mark.unit
 def test_sanity():
     assert 1 != 0
+
+
+@pytest.fixture
+def todo_repository():
+    time.sleep(1)
+    alembicArgs = ["--raiseerr", "upgrade", "head"]
+    alembic.config.main(argv=alembicArgs)
+
+    engine = get_engine(os.getenv("DB_STRING"))
+    session = sessionmaker(bind=engine)()
+
+    yield SQLTodoRepository(session)
+
+    session.close()
+
+    sessionmaker(bind=engine, autocommit=True)().execute(
+        ";".join([f"TRUNCATE TABLE {t} CASCADE" for t in SQL_BASE.metadata.tables.keys()])
+    )
 
 
 @pytest.mark.integration
@@ -27,6 +45,10 @@ def test_repository(todo_repository: SQLTodoRepository):
     with pytest.raises(IntegrityError):
         with todo_repository as r:
             r.save(Todo(key="testkey", value="not allowed: unique todo keys!"))
+
+    with pytest.raises(DataError):
+        with todo_repository as r:
+            r.save(Todo(key="too long", value=129 * "x"))
 
 
 @pytest.mark.integration
@@ -67,21 +89,3 @@ def test_api():
 
     assert response.status_code == 200
     assert response.json() == {"key": "testkey", "value": "testvalue", "done": False}
-
-
-@pytest.fixture
-def todo_repository():
-    time.sleep(1)
-    alembicArgs = ["--raiseerr", "upgrade", "head"]
-    alembic.config.main(argv=alembicArgs)
-
-    engine = get_engine(os.getenv("DB_STRING"))
-    session = sessionmaker(bind=engine)()
-
-    yield SQLTodoRepository(session)
-
-    session.close()
-
-    sessionmaker(bind=engine, autocommit=True)().execute(
-        ";".join([f"TRUNCATE TABLE {t} CASCADE" for t in SQL_BASE.metadata.tables.keys()])
-    )
