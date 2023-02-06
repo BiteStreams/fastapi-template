@@ -65,17 +65,10 @@ def test_repository_filter(todo_repository: SQLTodoRepository):
     assert len(todos) == 1
     assert todos[0].value == "v"
 
-    todos = r.get(TodoFilter(key_contains="e"))
-    assert len(todos) == 2
-
-    todos = r.get(TodoFilter(key_contains="e", limit=1))
-    assert len(todos) == 1
-
-    todos = r.get(TodoFilter(value_contains="v"))
-    assert len(todos) == 2
-
-    todos = r.get(TodoFilter(done=True))
-    assert len(todos) == 0
+    assert len(r.get(TodoFilter(key_contains="e"))) == 2
+    assert len(r.get(TodoFilter(key_contains="e", limit=1))) == 1
+    assert len(r.get(TodoFilter(value_contains="v"))) == 2
+    assert len(r.get(TodoFilter(done=True))) == 0
 
 
 @pytest.mark.integration
