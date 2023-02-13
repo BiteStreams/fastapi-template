@@ -125,8 +125,8 @@ def create_todo_repository() -> Iterator[TodoRepository]:
 
     try:
         yield todo_repository
-    except Exception as error:
+    except Exception:
         session.rollback()
-        raise error
+        raise
     finally:
         session.close()
