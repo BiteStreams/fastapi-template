@@ -25,6 +25,10 @@ def get(key: str, todo_repository: TodoRepository = Depends(create_todo_reposito
     with todo_repository as repo:
         return repo.get_by_key(key)
 
+@app.get("/get1")
+def get():
+    return "hello"
+
 
 @app.get("/find", response_model=List[Todo])
 def find(todo_filter: TodoFilter = Depends(), todo_repository: TodoRepository = Depends(create_todo_repository)):
