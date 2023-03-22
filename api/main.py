@@ -29,6 +29,10 @@ def get(key: str, todo_repository: TodoRepository = Depends(create_todo_reposito
 def get():
     return "hello"
 
+@app.get("/get2")
+def get():
+    return "hello2"
+
 
 @app.get("/find", response_model=List[Todo])
 def find(todo_filter: TodoFilter = Depends(), todo_repository: TodoRepository = Depends(create_todo_repository)):
