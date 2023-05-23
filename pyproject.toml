@@ -13,7 +13,7 @@ keywords = ["FastAPI", "Template"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-requests = "^2.26.0"
+requests = "^2.31.0"
 fastapi = "^0.85.1"
 uvicorn = "^0.18.3"
 SQLAlchemy = "^1.4.42"
