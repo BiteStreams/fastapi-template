@@ -116,3 +116,6 @@ def test_api():
 
     assert response.status_code == 200
     assert response.json() == {"key": "testkey", "value": "testvalue", "done": False}
+
+    response = client.get("/get/wrong")
+    assert response.status_code == 404

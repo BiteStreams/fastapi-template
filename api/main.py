@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_201_CREATED
 
@@ -23,7 +23,12 @@ def create(key: str, value: str, todo_repository: TodoRepository = Depends(creat
 @app.get("/get/{key}", response_model=Optional[Todo])
 def get(key: str, todo_repository: TodoRepository = Depends(create_todo_repository)):
     with todo_repository as repo:
-        return repo.get_by_key(key)
+        todo = repo.get_by_key(key)
+
+        if not todo:
+            raise HTTPException(status_code=404, detail="Todo not found")
+
+        return todo
 
 
 @app.get("/find", response_model=List[Todo])
