@@ -23,12 +23,12 @@ utest: cleantest ## Run unit tests
 itest: cleantest ## Run integration tests
 	$(ci-docker-compose) run --rm integration pytest -m integration .
 
-check: ## Check the code base
+check: cleantest ## Check the code base
 	$(ci-docker-compose) run --rm unit black ./$(PROJECT) --check --diff
 	$(ci-docker-compose) run --rm unit isort ./$(PROJECT) --check --diff
 	$(ci-docker-compose) run --rm -v mypycache:/home/user/.mypy_cache unit mypy ./$(PROJECT)
 
-lint: ## Check the code base, and fix it
+lint: cleantest ## Check the code base, and fix it
 	$(ci-docker-compose) run --rm unit black ./$(PROJECT)
 	$(ci-docker-compose) run --rm unit isort ./$(PROJECT)
 	$(ci-docker-compose) run --rm -v mypycache:/home/user/.mypy_cache unit mypy ./$(PROJECT)
