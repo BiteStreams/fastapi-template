@@ -66,9 +66,9 @@ class InMemoryTodoRepository:  # In-memory implementation of interface
 
     def get(self, todo_filter: TodoFilter) -> List[Todo]:
         all_matching_todos = filter(
-            lambda todo: (todo_filter.key_contains and todo_filter.key_contains in todo.key)
-            and (todo_filter.value_contains and todo_filter.value_contains in todo.key)
-            and (todo_filter.done and todo_filter.done == todo.done),
+            lambda todo: (not todo_filter.key_contains or todo_filter.key_contains in todo.key)
+            and (not todo_filter.value_contains or todo_filter.value_contains in todo.value)
+            and (not todo_filter.done or todo_filter.done == todo.done),
             self.data.values(),
         )
 
